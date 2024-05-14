@@ -104,7 +104,7 @@ namespace Volontyor_Hakaton.Services.Identity
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(2),
+                expires: DateTime.Now.AddDays(5),
                 signingCredentials: creds
 
                 );

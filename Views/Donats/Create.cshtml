@@ -1,0 +1,48 @@
+﻿@model Volontyor_Hakaton.Models.Donats
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Donats</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Donater" class="control-label"></label>
+                <input asp-for="Donater" class="form-control" />
+                <span asp-validation-for="Donater" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DonatAmount" class="control-label"></label>
+                <input asp-for="DonatAmount" class="form-control" />
+                <span asp-validation-for="DonatAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DonatedAt" class="control-label"></label>
+                <input asp-for="DonatedAt" class="form-control" />
+                <span asp-validation-for="DonatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DotanetFor" class="control-label"></label>
+                <input asp-for="DotanetFor" class="form-control" />
+                <span asp-validation-for="DotanetFor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

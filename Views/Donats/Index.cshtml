@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Volontyor_Hakaton.Models.Donats>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Donater)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DonatAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DonatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DotanetFor)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Donater)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DonatAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DonatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DotanetFor)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.DonatId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.DonatId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.DonatId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
