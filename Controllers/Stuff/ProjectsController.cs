@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Volontyor_Hakaton.Data;
+using Volontyor_Hakaton.DTOs.Dashboard;
+using Volontyor_Hakaton.DTOs.Projects;
 using Volontyor_Hakaton.Models;
 
 namespace Volontyor_Hakaton.Controllers.Stuff
@@ -84,16 +86,27 @@ namespace Volontyor_Hakaton.Controllers.Stuff
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Projects>> PostProjects(Projects projects)
+        public async Task<ActionResult<Projects>> PostProjects(ProjectCreateDTO projects)
         {
           if (_context.Projects == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
           }
-            _context.Projects.Add(projects);
+            Projects p = new()
+            {
+                AddressInfo = projects.AddressInfo,
+                CreatedAt = DateTime.Now,
+                InitiatedBy = projects.InitiatedBy,
+                ProjectName = projects.ProjectName,
+                Region = projects.Region,
+                Status = Status.New,
+                ProjectType = projects.ProjectType,
+
+            };
+            _context.Projects.Add(p);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProjects", new { id = projects.ProjectId }, projects);
+            return CreatedAtAction("GetProjects", new { id = p.ProjectId }, p);
         }
 
         // DELETE: api/Projects/5

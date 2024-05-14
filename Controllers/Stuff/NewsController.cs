@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Volontyor_Hakaton.Data;
+using Volontyor_Hakaton.DTOs.News;
 using Volontyor_Hakaton.Models;
 
 namespace Volontyor_Hakaton.Controllers.Stuff
@@ -84,16 +85,23 @@ namespace Volontyor_Hakaton.Controllers.Stuff
         // POST: api/News
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<News>> PostNews(News news)
+        public async Task<ActionResult<News>> PostNews(NewsDTO news)
         {
           if (_context.News == null)
           {
               return Problem("Entity set 'ApplicationDbContext.News'  is null.");
           }
-            _context.News.Add(news);
+            News newss = new()
+            {
+                NewDescription = news.NewDescription,
+                CreatedAt = DateTime.Now,
+                ImageUrl = news.ImageUrl,
+                NewName = news.NewName
+            };
+            _context.News.Add(newss);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetNews", new { id = news.NewId }, news);
+            return CreatedAtAction("GetNews", new { id = newss.NewId }, newss);
         }
 
         // DELETE: api/News/5
