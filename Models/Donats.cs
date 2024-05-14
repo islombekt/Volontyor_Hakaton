@@ -9,7 +9,6 @@ namespace Volontyor_Hakaton.Models
         public string? Donater {  get; set; }
         public decimal DonatAmount {  get; set; }
         public DateTime DonatedAt { get; set; }
-        public List<string> DotanetFor {  get; set; } = new List<string>();
-
+        public string DotanetFor { get; set; } = "Barchasi";
     }
 }
