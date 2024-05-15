@@ -193,6 +193,7 @@ namespace Volontyor_Hakaton.Controllers.Stuff
                 Region = projects.Region,
                 Status = Status.New,
                 ProjectType = projects.ProjectType,
+               ExtraInfo = projects.ExtraInfo,
 
             };
             _context.Projects.Add(p);
