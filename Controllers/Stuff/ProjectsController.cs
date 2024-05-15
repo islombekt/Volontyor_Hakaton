@@ -103,6 +103,17 @@ namespace Volontyor_Hakaton.Controllers.Stuff
             return Ok();
            
         }
+
+        [HttpGet("GetActiveOnes")]
+        public async Task<IActionResult> GetActiveOnes()
+        {
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
+            return Ok(await _context.Projects.Where(d=>d.Status == Status.Active).ToListAsync());
+        }
+
         // GET: api/Projects
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Projects>>> GetProjects()
