@@ -46,12 +46,12 @@ namespace Volontyor_Hakaton.Controllers.Anonyms
         [HttpGet("VolontyorsRatings")]
         public async Task<IActionResult> VolontyorsRatings()
         {
-            var users = await _context.User_Project.GroupBy(d => d.UserId).Select(d => new Ratings()
+            var users = await _context.User_Project.Include(d=>d.User).GroupBy(d => d.UserId).Select(d => new Ratings()
             {
                 UserId = d.Key,
                 score = d.Sum(c => c.Score),
                 rate =d.Count() == 0 ? 0 : d.Sum(c => c.Score) / d.Count(),
-                UserName = "",
+                UserName = d.FirstOrDefault().User.FIO,
 
             }).OrderByDescending(d=> d.score).Take(10).ToListAsync();
             return Ok(users);
