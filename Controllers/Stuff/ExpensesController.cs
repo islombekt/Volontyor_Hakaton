@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Volontyor_Hakaton.Data;
+using Volontyor_Hakaton.DTOs.Expenses;
 using Volontyor_Hakaton.Models;
 
 namespace Volontyor_Hakaton.Controllers.Stuff
@@ -29,25 +30,44 @@ namespace Volontyor_Hakaton.Controllers.Stuff
           {
               return NotFound();
           }
-            return await _context.Expenses.ToListAsync();
+          var expenses = await _context.Expenses.Include(d=>d.Project)
+                .Select(d=> new ExpenseInfo()
+                {
+                    E_Price = d.E_Price,
+                    ProjectId = d.ProjectId,
+                    ProjectName = d.Project.ProjectName,
+                    Reason = d.Reason,
+                    E_Id = d.E_Id,
+                })
+                .ToListAsync();
+            return Ok(expenses);
         }
 
         // GET: api/Expenses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expenses>> GetExpenses(int id)
+        public async Task<IActionResult> GetExpenses(int id)
         {
           if (_context.Expenses == null)
           {
               return NotFound();
           }
-            var expenses = await _context.Expenses.FindAsync(id);
+            var expenses = await _context.Expenses
+                .Include(d => d.Project)
+                .Select(d => new ExpenseInfo()
+                {
+                    E_Price = d.E_Price,
+                    ProjectId = d.ProjectId,
+                    ProjectName = d.Project.ProjectName,
+                    Reason = d.Reason,
+                    E_Id = d.E_Id,
+                }).FirstOrDefaultAsync(d => d.E_Id == id);
 
             if (expenses == null)
             {
                 return NotFound();
             }
 
-            return expenses;
+            return Ok(expenses);
         }
 
         // PUT: api/Expenses/5
@@ -84,16 +104,23 @@ namespace Volontyor_Hakaton.Controllers.Stuff
         // POST: api/Expenses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Expenses>> PostExpenses(Expenses expenses)
+        public async Task<ActionResult<Expenses>> PostExpenses(ExpenseCreate expenses)
         {
           if (_context.Expenses == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Expenses'  is null.");
           }
-            _context.Expenses.Add(expenses);
+            Expenses expense = new()
+            {
+                DateTime = DateTime.Now,
+                E_Price = expenses.E_Price,
+                ProjectId = expenses.ProjectId,
+                Reason = expenses.Reason,
+            };
+            _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetExpenses", new { id = expenses.E_Id }, expenses);
+            return CreatedAtAction("GetExpenses", new { id = expense.E_Id }, expense);
         }
 
         // DELETE: api/Expenses/5

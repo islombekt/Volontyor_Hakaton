@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Volontyor_Hakaton.Data;
+using Volontyor_Hakaton.DTOs.Donats;
 using Volontyor_Hakaton.Models;
 
 namespace Volontyor_Hakaton.Controllers.Stuff
@@ -84,16 +85,23 @@ namespace Volontyor_Hakaton.Controllers.Stuff
         // POST: api/Donats
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Donats>> PostDonats(Donats donats)
+        public async Task<ActionResult<Donats>> PostDonats(CreateDonat donats)
         {
           if (_context.Donats == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Donats'  is null.");
           }
-            _context.Donats.Add(donats);
+            Donats donat = new()
+            {
+                DonatAmount = donats.DonatAmount,
+                DonatedAt = DateTime.Now,
+                Donater = donats.Donater,
+                DotanetFor = donats.DotanetFor,
+            };
+            _context.Donats.Add(donat);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDonats", new { id = donats.DonatId }, donats);
+            return CreatedAtAction("GetDonats", new { id = donat.DonatId }, donat);
         }
 
         // DELETE: api/Donats/5

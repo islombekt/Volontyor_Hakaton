@@ -13,7 +13,7 @@ namespace Volontyor_Hakaton.Models
         public string Region { get; set; } = "Toshkent shahar";
         public string? AddressInfo {  get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-
+        public string? ExtraInfo {  get; set; }
         public virtual ICollection<Expenses>? Expenses { get; set; }
         public virtual ICollection<User_Project>? User_Project { get; set; }
 

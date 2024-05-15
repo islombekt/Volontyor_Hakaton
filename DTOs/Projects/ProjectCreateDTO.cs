@@ -9,5 +9,6 @@ namespace Volontyor_Hakaton.DTOs.Projects
         public string? InitiatedBy { get; set; }
         public string Region { get; set; } = "Toshkent shahar";
         public string? AddressInfo { get; set; }
+        public string? ExtraInfo { get; set; }
     }
 }

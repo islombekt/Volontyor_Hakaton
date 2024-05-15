@@ -23,6 +23,86 @@ namespace Volontyor_Hakaton.Controllers.Stuff
             _context = context;
         }
 
+        [HttpPost("Join")]
+        public async Task<IActionResult> Join([FromQuery]JoinTeam joinTeam)
+        {
+            var projects = await _context.Projects.FindAsync(joinTeam.ProjectId);
+
+            if (projects == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.FindAsync(joinTeam.UserId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var findExisting = await _context.User_Project.FirstOrDefaultAsync(d=>d.ProjectId == joinTeam.ProjectId && d.UserId == joinTeam.UserId);
+            if (findExisting != null)
+            {
+                return BadRequest("Mavjud volontyor!");
+            }
+            User_Project project = new()
+            {
+                ProjectId = joinTeam.ProjectId,
+                UserId = joinTeam.UserId,
+
+            };
+            await _context.User_Project.AddAsync(project);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        [HttpGet("GetProjectMembers")]
+        public async Task<IActionResult> GetProjectMembers(int id)
+        {
+            if (_context.User_Project == null)
+            {
+                return NotFound();
+            }
+            var data = await _context.User_Project.Where(d=>d.ProjectId == id)
+                .Include(d => d.User).Include(d => d.Project)
+                .Select(d=> new ProjectMembers()
+                {
+                    ProjectId=d.ProjectId,
+                    ProjectName = d.Project.ProjectName,
+                    Score = d.Score,
+                    UserId = d.UserId,
+                    up_Id=d.up_Id,
+                    UserInfo = $"{d.User.FIO}  (tel: {d.User.PhoneNumber})"
+                })
+                .ToListAsync();
+            return Ok(data);
+        }
+        [HttpPut("GiveRatings")]
+        public async Task<IActionResult> GiveRatings(int id, User_Project user_Project)
+        {
+            if (id != user_Project.up_Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(user_Project).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectsExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok();
+           
+        }
         // GET: api/Projects
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Projects>>> GetProjects()
@@ -36,7 +116,7 @@ namespace Volontyor_Hakaton.Controllers.Stuff
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Projects>> GetProjects(int id)
+        public async Task<IActionResult> GetProjects(int id)
         {
           if (_context.Projects == null)
           {
@@ -48,8 +128,9 @@ namespace Volontyor_Hakaton.Controllers.Stuff
             {
                 return NotFound();
             }
-
-            return projects;
+         
+            
+            return Ok(projects);
         }
 
         // PUT: api/Projects/5
@@ -80,7 +161,7 @@ namespace Volontyor_Hakaton.Controllers.Stuff
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Projects
