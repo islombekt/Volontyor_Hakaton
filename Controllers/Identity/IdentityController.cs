@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Volontyor_Hakaton.Data;
 using Volontyor_Hakaton.DTOs.Identity;
 using Volontyor_Hakaton.Models;
@@ -20,6 +21,31 @@ namespace Volontyor_Hakaton.Controllers.Identity
             _context = context;
             _identityService = identityService;
         }
+        [HttpGet("Users")]
+        public async Task<IActionResult> Users()
+        {
+            var users = await _context.Users.Select(d => new
+            {
+                d.FIO,d.UserName, d.UserRole,d.UserId,d.Description,d.PhoneNumber
+            }).ToListAsync();
+            return Ok(users);
+        }
+
+        [HttpGet("Volontyors")]
+        public async Task<IActionResult> Volontyors()
+        {
+            var users = await _context.Users.Where(d=> d.UserRole == "volontyor").Select(d => new
+            {
+                d.FIO,
+                d.UserName,
+                d.UserRole,
+                d.UserId,
+                d.Description,
+                d.PhoneNumber
+            }).ToListAsync();
+            return Ok(users);
+        }
+
         [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginRequest model)
         {
